@@ -9,4 +9,10 @@ export default defineConfig({
     globals: true,
     setupFiles: './src/setupTests.ts',
   },
+  server: {
+    port: 3000,
+    host: true,
+    allowedHosts: ['.loca.lt'] // This matches subdomains like xyz.ngrok-free.app
+
+  },
 });

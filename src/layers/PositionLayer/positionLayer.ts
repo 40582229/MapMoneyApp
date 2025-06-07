@@ -9,15 +9,12 @@ import Style from 'ol/style/Style';
 
 export interface PositionLayerProps {
   color: string;
-  position: Array<number>;
 }
 class PositionLayer {
   #color: string;
-  #position: Array<number>;
 
-  constructor({ color, position }: PositionLayerProps) {
+  constructor({ color }: PositionLayerProps) {
     this.#color = color;
-    this.#position = position;
   }
 
   #getIconStyle() {
@@ -37,16 +34,16 @@ class PositionLayer {
     return iconStyle;
   }
 
-  #getIconFeature() {
+  #getIconFeature(position:Array<number>) {
     const iconFeature = new Feature({
-      geometry: new Point([...this.#position]),
+      geometry: new Point([...position]),
     });
     iconFeature.setStyle(this.#getIconStyle());
     return iconFeature;
   }
   
-  getPositionLayer() {
-    const iconFeature = this.#getIconFeature();
+  getPositionLayer(position:Array<number>) {
+    const iconFeature = this.#getIconFeature(position);
     const vectorSource = new VectorSource({
       features: [iconFeature],
     });
