@@ -12,7 +12,6 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
-    allowedHosts: ['.loca.lt'] // This matches subdomains like xyz.ngrok-free.app
-
+    allowedHosts: true,
   },
 });
