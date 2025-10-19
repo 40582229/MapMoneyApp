@@ -28,6 +28,14 @@ const ReliableMap = () => {
           encoding: 'terrarium',
           tileSize: 256,
         },
+        'aws-hillshade':{
+          type:'raster-dem',
+          tiles: [
+            'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
+          ],
+          encoding: 'terrarium',
+          tileSize: 256,
+        }
       },
       layers: [
         {
@@ -38,7 +46,7 @@ const ReliableMap = () => {
         {
           id: 'hills',
           type: 'hillshade',
-          source: 'aws-terrain',
+          source: 'aws-hillshade',
           layout: { visibility: 'visible' },
           paint: { 'hillshade-shadow-color': '#473B24' },
         },
@@ -65,7 +73,7 @@ const ReliableMap = () => {
         exaggeration: 3,
       }),
     );
-    map.current.addSource('users', {
+    /*map.current.addSource('users', {
       type: 'geojson',
       data: { type: 'FeatureCollection', features: [] },
     });
@@ -77,26 +85,10 @@ const ReliableMap = () => {
         'circle-radius': 6,
         'circle-color': ['get', 'color'], // or fixed color
       },
-    });
+    });*/
 
     // example in-memory store
-    useEffect(() => {
-      const user = {
-        id: 12313,
-        lng: 0,
-        lat: 0,
-      };
-      const idx = usersGeo.features.findIndex((f: any) => f.id === user.id);
-      const feature = {
-        type: 'Feature',
-        id: user.id,
-        geometry: { type: 'Point', coordinates: [user.lng, user.lat] },
-        properties: { ...user }, // keep display props
-      };
-      if (idx === -1) usersGeo.features.push(feature);
-      else usersGeo.features[idx] = feature;
-      map.current?.getSource('users').set
-    }, []);
+
 
     // user = { id, lng, lat, ...props }
 
