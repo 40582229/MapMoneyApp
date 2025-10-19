@@ -1,12 +1,30 @@
 import { useEffect, useRef } from 'react';
 import maplibregl, { GeolocateControl } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import type { FeatureCollection, Feature, Point } from 'geojson';
 
 const ReliableMap = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const usersGeo: any = { type: 'FeatureCollection', features: [] };
+  const users = [
+    { name: 'Alice', coords: [12.4964, 41.9028] }, // Rome
+    { name: 'Bob', coords: [-0.1276, 51.5074] }, // London
+    { name: 'Charlie', coords: [2.3522, 48.8566] }, // Paris
+  ];
 
+  const userGeoJSON: FeatureCollection<Point, { name: string }> = {
+    type: 'FeatureCollection',
+    features: users.map<Feature<Point, { name: string }>>((user) => ({
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: user.coords,
+      },
+      properties: {
+        name: user.name,
+      },
+    })),
+  };
   useEffect(() => {
     // Prevent double initialization
     if (!mapContainer.current || map.current) return;
@@ -28,14 +46,14 @@ const ReliableMap = () => {
           encoding: 'terrarium',
           tileSize: 256,
         },
-        'aws-hillshade':{
-          type:'raster-dem',
+        'aws-hillshade': {
+          type: 'raster-dem',
           tiles: [
             'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
           ],
           encoding: 'terrarium',
           tileSize: 256,
-        }
+        },
       },
       layers: [
         {
@@ -89,7 +107,6 @@ const ReliableMap = () => {
 
     // example in-memory store
 
-
     // user = { id, lng, lat, ...props }
 
     // Initialize the geolocate control.
@@ -107,8 +124,27 @@ const ReliableMap = () => {
       console.log('A trackuserlocationend event has occurred.');
     });
 
-    map.current.on('load', () => {
+    // A small base64-encoded PNG marker
+
+    map.current.on('load', async () => {
       geolocate.trigger();
+      map.current?.addSource('users', {
+        type: 'geojson',
+        data: userGeoJSON,
+      });
+
+      // Add a circle layer instead of a marker image
+      map.current?.addLayer({
+        id: 'users-layer',
+        type: 'circle',
+        source: 'users',
+        paint: {
+          'circle-radius': 6,
+          'circle-color': '#007AFF',
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#FFFFFF',
+        },
+      });
       console.log('Map loaded successfully!');
     });
 
