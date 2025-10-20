@@ -37,11 +37,11 @@ const ReliableMap = () => {
       sources: {
         osm: {
           type: 'raster',
-          tiles: ['https://tiles.wmflabs.org/hikebike/{z}/{x}/{y}.png'],
+          tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
           tileSize: 256,
           attribution: '&copy; OpenStreetMap Contributors',
-          maxzoom:13,
-          minzoom:3
+          maxzoom: 13,
+          minzoom: 3,
         },
         'aws-terrain': {
           type: 'raster-dem',
@@ -70,6 +70,27 @@ const ReliableMap = () => {
           type: 'raster',
           source: 'osm',
         },
+        {
+          id: 'terrain-extrusion',
+          type: 'fill-extrusion',
+          source: 'aws-hillshade', // DEM source
+          paint: {
+            'fill-extrusion-height': ['get', 'elevation'], // only works if DEM is vector
+            'fill-extrusion-color': [
+              'interpolate',
+              ['linear'],
+              ['get', 'elevation'],
+              0,
+              '#00ff00',
+              500,
+              '#a3d977',
+              1000,
+              '#f1a340',
+              2000,
+              '#ffffff',
+            ],
+          },
+        },
       ],
     };
 
@@ -83,7 +104,7 @@ const ReliableMap = () => {
       bearing: 20,
       maxPitch: 85,
       maxZoom: 14,
-      minZoom: 3,    // prevent zooming out past 2
+      minZoom: 3, // prevent zooming out past 2
     });
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
 
