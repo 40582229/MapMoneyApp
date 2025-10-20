@@ -40,7 +40,7 @@ const ReliableMap = () => {
           tiles: ['https://tile.opentopomap.org/{z}/{x}/{y}.png'],
           tileSize: 256,
           attribution: '&copy; OpenStreetMap Contributors',
-          maxzoom:12,
+          maxzoom:13,
           minzoom:3
         },
         'aws-terrain': {
@@ -82,7 +82,7 @@ const ReliableMap = () => {
       pitch: 70,
       bearing: 20,
       maxPitch: 85,
-      maxZoom: 13,
+      maxZoom: 14,
       minZoom: 3,    // prevent zooming out past 2
     });
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
