@@ -40,7 +40,7 @@ const ReliableMap = () => {
           tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
           tileSize: 256,
           attribution: '&copy; OpenStreetMap Contributors',
-          maxzoom: 13,
+          maxzoom: 11,
           minzoom: 3,
         },
         'aws-terrain': {
@@ -75,9 +75,9 @@ const ReliableMap = () => {
           type: 'hillshade',
           source: 'aws-hillshade',
           maxzoom: 11,
+          minzoom:8,
           paint: {
-            'hillshade-exaggeration': 1.5,
-            
+            'hillshade-exaggeration': 1,
           },
         },
       ],
