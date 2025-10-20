@@ -40,7 +40,7 @@ const ReliableMap = () => {
           tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', ],
           tileSize: 256,
           attribution: '&copy; OpenStreetMap Contributors',
-          maxzoom: 11,
+          maxzoom: 12,
           minzoom: 3,
         },
         'aws-terrain': {
@@ -82,7 +82,7 @@ const ReliableMap = () => {
       pitch: 60,
       bearing: 0,
       maxPitch: 65,
-      maxZoom: 11,
+      maxZoom: 12,
       minZoom: 3, // prevent zooming out past 2
     });
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
@@ -90,7 +90,7 @@ const ReliableMap = () => {
     map.current.addControl(
       new maplibregl.TerrainControl({
         source: 'aws-terrain',
-        exaggeration: 4,
+        exaggeration: 3,
       }),
 
     );
