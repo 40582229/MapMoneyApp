@@ -31,18 +31,25 @@ const ReliableMap = () => {
 
     const style: maplibregl.StyleSpecification = {
       version: 8,
+      projection: {
+        type: 'globe',
+      },
       sources: {
         osm: {
           type: 'raster',
           tiles: ['https://tile.opentopomap.org/{z}/{x}/{y}.png'],
           tileSize: 256,
           attribution: '&copy; OpenStreetMap Contributors',
+          maxzoom:11,
+          minzoom:3
         },
         'aws-terrain': {
           type: 'raster-dem',
           tiles: [
             'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
           ],
+          maxzoom: 11,
+          minzoom: 8,
           encoding: 'terrarium',
           tileSize: 256,
         },
@@ -51,6 +58,8 @@ const ReliableMap = () => {
           tiles: [
             'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
           ],
+          maxzoom: 11,
+          minzoom: 8,
           encoding: 'terrarium',
           tileSize: 256,
         },
@@ -61,13 +70,6 @@ const ReliableMap = () => {
           type: 'raster',
           source: 'osm',
         },
-        {
-          id: 'hills',
-          type: 'hillshade',
-          source: 'aws-hillshade',
-          layout: { visibility: 'visible' },
-          paint: { 'hillshade-shadow-color': '#473B24' },
-        },
       ],
     };
 
@@ -76,19 +78,19 @@ const ReliableMap = () => {
       container: mapContainer.current,
       style,
       center: [-3.436, 55.3781], // UK
-      zoom: 10,
+      zoom: 9,
       pitch: 70,
       bearing: 20,
       maxPitch: 85,
-      maxZoom: 18,
-      minZoom: 0,
+      maxZoom: 13,
+      minZoom: 3,    // prevent zooming out past 2
     });
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
 
     map.current.addControl(
       new maplibregl.TerrainControl({
         source: 'aws-terrain',
-        exaggeration: 3,
+        exaggeration: 4,
       }),
     );
     /*map.current.addSource('users', {
