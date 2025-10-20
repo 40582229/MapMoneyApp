@@ -36,12 +36,11 @@ const ReliableMap = () => {
       },
       sources: {
         osm: {
-          type: 'raster',
-          tiles: ['https://tile.opentopomap.org/{z}/{x}/{y}.png', ],
-          tileSize: 256,
-          attribution: '&copy; OpenStreetMap Contributors',
-          maxzoom: 11,
-          minzoom: 3,
+          type: 'vector',
+          tiles: ['https://tiles.openfreemap.org/{z}/{x}/{y}.pbf'],
+          attribution: '&copy; OpenStreetMap contributors & OpenFreeMap',
+          maxzoom: 14,
+          minzoom: 0,
         },
         'aws-terrain': {
           type: 'raster-dem',
@@ -53,13 +52,26 @@ const ReliableMap = () => {
           encoding: 'terrarium',
           tileSize: 256,
         },
-
       },
       layers: [
         {
-          id: 'osm',
-          type: 'raster',
+          id: 'osm-land',
+          type: 'fill', // fill for polygons
           source: 'osm',
+          'source-layer': 'land', // vector tile layer name (depends on tile schema)
+          paint: {
+            'fill-color': '#e0e0e0',
+          },
+        },
+        {
+          id: 'osm-roads',
+          type: 'line', // line for roads
+          source: 'osm',
+          'source-layer': 'transport', // vector tile layer name for roads
+          paint: {
+            'line-color': '#888',
+            'line-width': 1.5,
+          },
         },
       ],
     };
@@ -83,7 +95,6 @@ const ReliableMap = () => {
         source: 'aws-terrain',
         exaggeration: 3,
       }),
-
     );
     /*map.current.addSource('users', {
       type: 'geojson',
