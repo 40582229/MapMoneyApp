@@ -37,7 +37,7 @@ const ReliableMap = () => {
       sources: {
         osm: {
           type: 'raster',
-          tiles: ['https://tile.opentopomap.org/{z}/{x}/{y}.png'],
+          tiles: ['https://tiles.wmflabs.org/hikebike/{z}/{x}/{y}.png'],
           tileSize: 256,
           attribution: '&copy; OpenStreetMap Contributors',
           maxzoom:13,
