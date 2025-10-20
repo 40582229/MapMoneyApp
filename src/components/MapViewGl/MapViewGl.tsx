@@ -89,9 +89,9 @@ const ReliableMap = () => {
       style,
       center: [-3.436, 55.3781], // UK
       zoom: 9,
-      pitch: 70,
-      bearing: 20,
-      maxPitch: 85,
+      pitch: 60,
+      bearing: 0,
+      maxPitch: 65,
       maxZoom: 11,
       minZoom: 3, // prevent zooming out past 2
     });
