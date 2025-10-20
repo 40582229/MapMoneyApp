@@ -37,7 +37,7 @@ const ReliableMap = () => {
       sources: {
         osm: {
           type: 'raster',
-          tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+          tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', ],
           tileSize: 256,
           attribution: '&copy; OpenStreetMap Contributors',
           maxzoom: 11,
@@ -69,16 +69,6 @@ const ReliableMap = () => {
           id: 'osm',
           type: 'raster',
           source: 'osm',
-        },
-        {
-          id: 'hillshading',
-          type: 'hillshade',
-          source: 'aws-hillshade',
-          maxzoom: 11,
-          minzoom:8,
-          paint: {
-            'hillshade-exaggeration': 1,
-          },
         },
       ],
     };
