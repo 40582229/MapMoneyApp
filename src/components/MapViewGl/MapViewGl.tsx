@@ -30,51 +30,61 @@ const ReliableMap = () => {
     if (!mapContainer.current || map.current) return;
 
     const style: maplibregl.StyleSpecification = {
-      version: 8,
-      projection: {
-        type: 'globe',
+    version: 8,
+    projection: {
+      type: 'globe', // 3D globe view
+    },
+    sources: {
+      osm: {
+        type: 'vector',
+        tiles: ["https://tiles.openfreemap.org/{z}/{x}/{y}.pbf"],
+        attribution: '&copy; OpenStreetMap contributors & OpenFreeMap',
+        maxzoom: 14,
+        minzoom: 0,
       },
-      sources: {
-        osm: {
-          type: 'vector',
-          tiles: ['https://tiles.openfreemap.org/{z}/{x}/{y}.pbf'],
-          attribution: '&copy; OpenStreetMap contributors & OpenFreeMap',
-          maxzoom: 14,
-          minzoom: 0,
-        },
-        'aws-terrain': {
-          type: 'raster-dem',
-          tiles: [
-            'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
+      'aws-terrain': {
+        type: 'raster-dem',
+        tiles: [
+          'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
+        ],
+        maxzoom: 11,
+        minzoom: 8,
+        encoding: 'terrarium',
+        tileSize: 256,
+      },
+    },
+    layers: [
+      {
+        id: 'terrain-extrusion',
+        type: 'fill-extrusion', // 3D terrain effect
+        source: 'osm',
+        'source-layer': 'land', // vector tile layer name
+        paint: {
+          'fill-extrusion-color': [
+            'interpolate',
+            ['linear'],
+            ['get', 'elevation'], // vector tiles must have elevation property
+            0, '#a3d977',
+            500, '#f1a340',
+            1000, '#ffffff',
           ],
-          maxzoom: 11,
-          minzoom: 8,
-          encoding: 'terrarium',
-          tileSize: 256,
+          'fill-extrusion-height': ['get', 'elevation'],
+          'fill-extrusion-base': 0,
+          'fill-extrusion-opacity': 0.8,
         },
       },
-      layers: [
-        {
-          id: 'osm-land',
-          type: 'fill', // fill for polygons
-          source: 'osm',
-          'source-layer': 'land', // vector tile layer name (depends on tile schema)
-          paint: {
-            'fill-color': '#e0e0e0',
-          },
+      {
+        id: 'osm-roads',
+        type: 'line',
+        source: 'osm',
+        'source-layer': 'transport', // vector tile layer name for roads
+        paint: {
+          'line-color': '#888',
+          'line-width': 1.5,
         },
-        {
-          id: 'osm-roads',
-          type: 'line', // line for roads
-          source: 'osm',
-          'source-layer': 'transport', // vector tile layer name for roads
-          paint: {
-            'line-color': '#888',
-            'line-width': 1.5,
-          },
-        },
-      ],
-    };
+      },
+    ],
+  };
 
     // Create map instance
     map.current = new maplibregl.Map({
