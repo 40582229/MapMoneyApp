@@ -40,7 +40,7 @@ const ReliableMap = () => {
           tiles: ['https://tile.opentopomap.org/{z}/{x}/{y}.png', ],
           tileSize: 256,
           attribution: '&copy; OpenStreetMap Contributors',
-          maxzoom: 12,
+          maxzoom: 11,
           minzoom: 3,
         },
         'aws-terrain': {
@@ -53,16 +53,7 @@ const ReliableMap = () => {
           encoding: 'terrarium',
           tileSize: 256,
         },
-        'aws-hillshade': {
-          type: 'raster-dem',
-          tiles: [
-            'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
-          ],
-          maxzoom: 11,
-          minzoom: 8,
-          encoding: 'terrarium',
-          tileSize: 256,
-        },
+
       },
       layers: [
         {
