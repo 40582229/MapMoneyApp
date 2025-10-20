@@ -92,7 +92,7 @@ const ReliableMap = () => {
       pitch: 70,
       bearing: 20,
       maxPitch: 85,
-      maxZoom: 14,
+      maxZoom: 11,
       minZoom: 3, // prevent zooming out past 2
     });
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
