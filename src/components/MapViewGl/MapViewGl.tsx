@@ -40,7 +40,7 @@ const ReliableMap = () => {
           tiles: ['https://tile.opentopomap.org/{z}/{x}/{y}.png'],
           tileSize: 256,
           attribution: '&copy; OpenStreetMap Contributors',
-          maxzoom:11,
+          maxzoom:12,
           minzoom:3
         },
         'aws-terrain': {
