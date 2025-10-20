@@ -70,27 +70,6 @@ const ReliableMap = () => {
           type: 'raster',
           source: 'osm',
         },
-        {
-          id: 'terrain-extrusion',
-          type: 'fill-extrusion',
-          source: 'aws-hillshade', // DEM source
-          paint: {
-            'fill-extrusion-height': ['get', 'elevation'], // only works if DEM is vector
-            'fill-extrusion-color': [
-              'interpolate',
-              ['linear'],
-              ['get', 'elevation'],
-              0,
-              '#00ff00',
-              500,
-              '#a3d977',
-              1000,
-              '#f1a340',
-              2000,
-              '#ffffff',
-            ],
-          },
-        },
       ],
     };
 
