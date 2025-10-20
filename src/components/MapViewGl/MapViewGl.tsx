@@ -37,10 +37,10 @@ const ReliableMap = () => {
       sources: {
         osm: {
           type: 'raster',
-          tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', ],
+          tiles: ['https://tile.opentopomap.org/{z}/{x}/{y}.png', ],
           tileSize: 256,
           attribution: '&copy; OpenStreetMap Contributors',
-          maxzoom: 18,
+          maxzoom: 12,
           minzoom: 3,
         },
         'aws-terrain': {
@@ -82,7 +82,7 @@ const ReliableMap = () => {
       pitch: 60,
       bearing: 0,
       maxPitch: 65,
-      maxZoom: 18,
+      maxZoom: 14,
       minZoom: 3, // prevent zooming out past 2
     });
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
