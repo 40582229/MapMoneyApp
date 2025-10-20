@@ -36,8 +36,8 @@ const ReliableMap = () => {
     },
     sources: {
       osm: {
-        type: 'vector',
-        tiles: ["https://tiles.openfreemap.org/{z}/{x}/{y}.pbf"],
+        type: 'raster',
+        tiles: ["https://tile.opentopomap.org/{z}/{x}/{y}.png"],
         attribution: '&copy; OpenStreetMap contributors & OpenFreeMap',
         maxzoom: 14,
         minzoom: 0,
@@ -55,33 +55,9 @@ const ReliableMap = () => {
     },
     layers: [
       {
-        id: 'terrain-extrusion',
-        type: 'fill-extrusion', // 3D terrain effect
+        id: 'osm',
+        type: 'raster', // 3D terrain effect
         source: 'osm',
-        'source-layer': 'land', // vector tile layer name
-        paint: {
-          'fill-extrusion-color': [
-            'interpolate',
-            ['linear'],
-            ['get', 'elevation'], // vector tiles must have elevation property
-            0, '#a3d977',
-            500, '#f1a340',
-            1000, '#ffffff',
-          ],
-          'fill-extrusion-height': ['get', 'elevation'],
-          'fill-extrusion-base': 0,
-          'fill-extrusion-opacity': 0.8,
-        },
-      },
-      {
-        id: 'osm-roads',
-        type: 'line',
-        source: 'osm',
-        'source-layer': 'transport', // vector tile layer name for roads
-        paint: {
-          'line-color': '#888',
-          'line-width': 1.5,
-        },
       },
     ],
   };
