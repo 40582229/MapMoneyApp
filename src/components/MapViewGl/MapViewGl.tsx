@@ -70,6 +70,16 @@ const ReliableMap = () => {
           type: 'raster',
           source: 'osm',
         },
+        {
+          id: 'hillshading',
+          type: 'hillshade',
+          source: 'aws-hillshade',
+          maxzoom: 11,
+          paint: {
+            'hillshade-exaggeration': 1.5,
+            
+          },
+        },
       ],
     };
 
@@ -92,6 +102,7 @@ const ReliableMap = () => {
         source: 'aws-terrain',
         exaggeration: 4,
       }),
+
     );
     /*map.current.addSource('users', {
       type: 'geojson',
