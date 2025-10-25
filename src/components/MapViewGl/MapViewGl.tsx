@@ -216,7 +216,7 @@ window.onunhandledrejection = function (event) {
         pos.coords.longitude,
         pos.coords.latitude,
       ];
-
+      alert(coords);
       updateUser({
         id: 'rk',
         name: 'ROKAS',
