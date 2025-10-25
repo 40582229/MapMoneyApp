@@ -229,7 +229,7 @@ const ReliableMap = () => {
         name: 'ROKAS',
         coords, // important: [lon, lat] array
         color: '#32D74B',
-        sizeMeters: 26,
+        sizeMeters: 5,
         heightMeters: 80,
       });
 
@@ -311,8 +311,8 @@ const ReliableMap = () => {
                 buildPyramidPolygon(
                   center,
                   bearing,
-                  user.sizeMeters * 10,
-                  user.sizeMeters * 4,
+                  user.sizeMeters,
+                  user.sizeMeters 
                 ),
               ],
             },
