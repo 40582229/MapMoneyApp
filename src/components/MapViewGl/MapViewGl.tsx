@@ -212,14 +212,12 @@ window.onunhandledrejection = function (event) {
     map.current.addControl(geolocate);
     geolocate.on('geolocate', (pos) => {
       if(!pos?.coords){
-        alert(pos?.coords)
         return;
       }
       const coords: [number, number] = [
         pos.coords.longitude,
         pos.coords.latitude,
       ];
-      alert(coords);
       updateUser({
         id: 'rk',
         name: 'ROKAS',
@@ -283,7 +281,6 @@ window.onunhandledrejection = function (event) {
   }, []); // run once
   useEffect(() => {
     if (!map.current) return;
-    alert("USERS UPDATED")
     // Wait for the map to finish loading its style
     const handleLoad = () => {
       const pyramidGeoJSON = {
