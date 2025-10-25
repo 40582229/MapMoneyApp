@@ -116,16 +116,22 @@ const ReliableMap = () => {
     },
   ]);
   // Catch uncaught JS errors
-window.onerror = function (message, source, lineno, colno, error) {
-  alert(`Error: ${message}\nSource: ${source}:${lineno}:${colno}`);
-  console.error('Caught by window.onerror:', { message, source, lineno, colno, error });
-};
+  window.onerror = function (message, source, lineno, colno, error) {
+    alert(`Error: ${message}\nSource: ${source}:${lineno}:${colno}`);
+    console.error('Caught by window.onerror:', {
+      message,
+      source,
+      lineno,
+      colno,
+      error,
+    });
+  };
 
-// Catch unhandled promise rejections
-window.onunhandledrejection = function (event) {
-  alert(`Unhandled Promise Rejection: ${event.reason}`);
-  console.error('Caught by window.onunhandledrejection:', event.reason);
-};
+  // Catch unhandled promise rejections
+  window.onunhandledrejection = function (event) {
+    alert(`Unhandled Promise Rejection: ${event.reason}`);
+    console.error('Caught by window.onunhandledrejection:', event.reason);
+  };
 
   const updateUser = (newUser: User) => {
     setUsers((prev) => {
@@ -211,7 +217,7 @@ window.onunhandledrejection = function (event) {
     });
     map.current.addControl(geolocate);
     geolocate.on('geolocate', (pos) => {
-      if(!pos?.coords){
+      if (!pos?.coords) {
         return;
       }
       const coords: [number, number] = [
@@ -337,8 +343,11 @@ window.onunhandledrejection = function (event) {
       }
     };
 
-    map.current.on('load', handleLoad);
-
+    if (map.current.loaded()) {
+      handleLoad();
+    } else {
+      map.current.on('load', handleLoad);
+    }
     // Also update whenever users change after map loaded
     return () => {
       map.current?.off('load', handleLoad);
