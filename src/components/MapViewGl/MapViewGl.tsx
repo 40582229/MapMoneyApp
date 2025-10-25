@@ -311,8 +311,8 @@ const ReliableMap = () => {
                 buildPyramidPolygon(
                   center,
                   bearing,
-                  user.sizeMeters * 100,
-                  user.sizeMeters * 40,
+                  user.sizeMeters * 10,
+                  user.sizeMeters * 4,
                 ),
               ],
             },
