@@ -213,7 +213,7 @@ const ReliableMap = () => {
 
     const geolocate = new GeolocateControl({
       positionOptions: { enableHighAccuracy: true },
-      trackUserLocation: false, // ❌ disable the blue dot tracking
+      trackUserLocation: true,
       showUserLocation: false, // Disable the blue location marker
       showAccuracyCircle: false, // Optionally, disable the accuracy circle
     });
