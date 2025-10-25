@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import maplibregl, { GeolocateControl } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { FeatureCollection, Feature, Polygon } from 'geojson';
@@ -92,13 +92,42 @@ function buildPyramidPolygon(
   // Return geojson polygon geometry
   return coords;
 }
+type User = {
+  id: string;
+  name: string;
+  coords: [number, number];
+  color: string;
+  sizeMeters: number;
+  heightMeters: number;
+};
 
 const ReliableMap = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<maplibregl.Map | null>(null);
+  const [users, setUsers] = useState<User[]>([
+    // initial users
+    {
+      id: 'alice',
+      name: 'Alice',
+      coords: [12.4964, 41.9028],
+      color: '#FF6A00',
+      sizeMeters: 30,
+      heightMeters: 90,
+    },
+  ]);
+  const updateUser = (newUser: User) => {
+    setUsers((prev) => {
+      const exists = prev.find((u) => u.id === newUser.id);
+      if (exists) {
+        return prev.map((u) => (u.id === newUser.id ? newUser : u));
+      } else {
+        return [...prev, newUser];
+      }
+    });
+  };
 
   // Example users: each has coords and optional visual properties
-  let users = [
+  /*let users = [
     {
       id: 'alice',
       name: 'Alice',
@@ -123,7 +152,7 @@ const ReliableMap = () => {
       sizeMeters: 26,
       heightMeters: 80,
     }, // Paris
-  ];
+  ];*/
 
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
@@ -170,22 +199,23 @@ const ReliableMap = () => {
     });
     map.current.addControl(geolocate);
     geolocate.on('trackuserlocationend', (pos) => {
-      console.log("POSITION", pos)
-      const user = users.find((user) => user.id === 'rk');
-      if (!user) {
-        users.push({
-          id: 'charlie',
-          name: 'Charlie',
-          coords: [2.3522, 48.8566],
-          color: '#32D74B',
-          sizeMeters: 26,
-          heightMeters: 80,
-        });
-      }else{
-        user.coords = pos
-      }
-      console.log('A trackuserlocationend event has occurred.');
+      const coords: [number, number] = [
+        pos.coords.longitude,
+        pos.coords.latitude,
+      ];
+
+      updateUser({
+        id: 'rk',
+        name: 'ROKAS',
+        coords,
+        color: '#32D74B',
+        sizeMeters: 26,
+        heightMeters: 80,
+      });
+
+      console.log('Updated user coordinates:', coords);
     });
+
     map.current.on('load', () => {
       // Compose a multi-feature GeoJSON: one polygon per user
       const features: Feature<Polygon, any>[] = users.map((user, idx) => {
