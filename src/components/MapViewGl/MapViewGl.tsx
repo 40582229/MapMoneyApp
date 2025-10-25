@@ -221,7 +221,7 @@ window.onunhandledrejection = function (event) {
       updateUser({
         id: 'rk',
         name: 'ROKAS',
-        coords,
+        coords: pos.coords,
         color: '#32D74B',
         sizeMeters: 26,
         heightMeters: 80,
