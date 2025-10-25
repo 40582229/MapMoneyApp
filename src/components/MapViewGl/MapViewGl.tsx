@@ -115,6 +115,18 @@ const ReliableMap = () => {
       heightMeters: 90,
     },
   ]);
+  // Catch uncaught JS errors
+window.onerror = function (message, source, lineno, colno, error) {
+  alert(`Error: ${message}\nSource: ${source}:${lineno}:${colno}`);
+  console.error('Caught by window.onerror:', { message, source, lineno, colno, error });
+};
+
+// Catch unhandled promise rejections
+window.onunhandledrejection = function (event) {
+  alert(`Unhandled Promise Rejection: ${event.reason}`);
+  console.error('Caught by window.onunhandledrejection:', event.reason);
+};
+
   const updateUser = (newUser: User) => {
     setUsers((prev) => {
       const exists = prev.find((u) => u.id === newUser.id);
