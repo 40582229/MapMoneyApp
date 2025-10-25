@@ -211,7 +211,10 @@ window.onunhandledrejection = function (event) {
     });
     map.current.addControl(geolocate);
     geolocate.on('trackuserlocationend', (pos) => {
-      if(!pos?.coords)return;
+      if(!pos?.coords){
+        alert(pos?.coords)
+        return;
+      }
       const coords: [number, number] = [
         pos.coords.longitude,
         pos.coords.latitude,
