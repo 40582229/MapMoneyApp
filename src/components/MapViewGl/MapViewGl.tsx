@@ -303,6 +303,7 @@ const ReliableMap = () => {
               name: user.name,
               color: user.color,
               height: user.heightMeters,
+              base: user.sizeMeters,
             },
             geometry: {
               type: 'Polygon',
@@ -329,8 +330,8 @@ const ReliableMap = () => {
           type: 'fill-extrusion',
           source: 'pyramids',
           paint: {
-            'fill-extrusion-base': 4900,
-            'fill-extrusion-height': 5000,
+            'fill-extrusion-base': ['get', 'base'],
+            'fill-extrusion-height': ['get', 'height'],
             'fill-extrusion-color': ['get', 'color'],
             'fill-extrusion-opacity': 0.95,
           },
