@@ -249,7 +249,7 @@ const ReliableMap = () => {
 
       // Trigger geolocate control so the browser may ask permission (optional)
       try {
-        geolocate.trigger();
+        //geolocate.trigger();
       } catch (e) {
         // some browsers may throw if geolocation isn't allowed - ignore
       }
