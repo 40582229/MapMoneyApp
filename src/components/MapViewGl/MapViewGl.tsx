@@ -210,7 +210,7 @@ window.onunhandledrejection = function (event) {
       trackUserLocation: true,
     });
     map.current.addControl(geolocate);
-    geolocate.on('trackuserlocationend', (pos) => {
+    geolocate.on('geolocate', (pos) => {
       if(!pos?.coords){
         alert(pos?.coords)
         return;
