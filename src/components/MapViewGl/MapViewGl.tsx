@@ -280,7 +280,7 @@ window.onunhandledrejection = function (event) {
   }, []); // run once
   useEffect(() => {
     if (!map.current) return;
-
+    alert("USERS UPDATED")
     // Wait for the map to finish loading its style
     const handleLoad = () => {
       const pyramidGeoJSON = {
