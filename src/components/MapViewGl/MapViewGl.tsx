@@ -237,6 +237,9 @@ const ReliableMap = () => {
     });
 
     map.current.on('load', () => {
+      const els = document.getElementsByClassName('maplibregl-ctrl-geolocate');
+      Array.from(els).forEach((el) => el.remove());
+
       // Compose a multi-feature GeoJSON: one polygon per use
 
       // Extrusion layer: use 'fill-extrusion' with per-fe
@@ -312,7 +315,7 @@ const ReliableMap = () => {
                   center,
                   bearing,
                   user.sizeMeters,
-                  user.sizeMeters 
+                  user.sizeMeters,
                 ),
               ],
             },
