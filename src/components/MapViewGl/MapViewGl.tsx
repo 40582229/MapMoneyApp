@@ -178,7 +178,7 @@ window.onunhandledrejection = function (event) {
           type: 'raster',
           tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
           attribution: '&copy; OpenStreetMap contributors & OpenFreeMap',
-          maxzoom: 11,
+          maxzoom: 18,
           minzoom: 0,
         },
       },
@@ -199,7 +199,7 @@ window.onunhandledrejection = function (event) {
       pitch: 55,
       bearing: -10,
       maxPitch: 65,
-      maxZoom: 13,
+      maxZoom: 18,
       minZoom: 2,
     });
 
