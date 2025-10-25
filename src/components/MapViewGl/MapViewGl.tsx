@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import maplibregl, { GeolocateControl } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { FeatureCollection, Feature, Polygon } from 'geojson';
@@ -217,63 +217,9 @@ const ReliableMap = () => {
     });
 
     map.current.on('load', () => {
-      // Compose a multi-feature GeoJSON: one polygon per user
-      const features: Feature<Polygon, any>[] = users.map((user, idx) => {
-        const center = user.coords as [number, number];
-        // target is the next user in the array (wrap-around)
-        const next = users[(idx + 1) % users.length].coords as [number, number];
-        const bearing = bearingBetweenPoints(center, next);
+      // Compose a multi-feature GeoJSON: one polygon per use
 
-        const polygonCoords = buildPyramidPolygon(center, bearing, 2500, 1200);
-
-        return {
-          type: 'Feature',
-          properties: {
-            id: user.id,
-            name: user.name,
-            color: 'yellow',
-            height: user.heightMeters,
-          },
-          geometry: {
-            type: 'Polygon',
-            coordinates: [polygonCoords],
-          },
-        } as Feature<Polygon, any>;
-      });
-
-      const pyramidGeoJSON: FeatureCollection = {
-        type: 'FeatureCollection',
-        features,
-      };
-
-      // Add geojson source and extrusion layer
-      if (!map.current!.getSource('pyramids')) {
-        map.current!.addSource('pyramids', {
-          type: 'geojson',
-          data: pyramidGeoJSON,
-        });
-      } else {
-        (
-          map.current!.getSource('pyramids') as maplibregl.GeoJSONSource
-        ).setData(pyramidGeoJSON);
-      }
-
-      // Extrusion layer: use 'fill-extrusion' with per-feature color/height
-      if (!map.current!.getLayer('pyramid-extrusion')) {
-        map.current!.addLayer({
-          id: 'pyramid-extrusion',
-          type: 'fill-extrusion',
-          source: 'pyramids',
-          paint: {
-            // Use property-driven height and color
-            'fill-extrusion-base': 4900,
-            'fill-extrusion-height': 5000, // 👈 Total height above ground
-            'fill-extrusion-color': ['get', 'color'],
-            'fill-extrusion-opacity': 0.95,
-          },
-        });
-      }
-
+      // Extrusion layer: use 'fill-extrusion' with per-fe
       // Add a simple 2D circle layer to mark the user center points (optional)
       /*if (!map.current!.getSource('user-points')) {
         map.current!.addSource('user-points', {
@@ -319,6 +265,72 @@ const ReliableMap = () => {
       }
     };
   }, []); // run once
+  useEffect(() => {
+    if (!map.current) return;
+
+    // Wait for the map to finish loading its style
+    const handleLoad = () => {
+      const pyramidGeoJSON = {
+        type: 'FeatureCollection' as const,
+        features: users.map((user, idx) => {
+          const center = user.coords;
+          const next = users[(idx + 1) % users.length]?.coords || center;
+          const bearing = bearingBetweenPoints(center, next);
+
+          return {
+            type: 'Feature',
+            properties: {
+              id: user.id,
+              name: user.name,
+              color: user.color,
+              height: user.heightMeters,
+            },
+            geometry: {
+              type: 'Polygon',
+              coordinates: [
+                buildPyramidPolygon(
+                  center,
+                  bearing,
+                  user.sizeMeters * 100,
+                  user.sizeMeters * 40,
+                ),
+              ],
+            },
+          } as Feature<Polygon, any>;
+        }),
+      } as FeatureCollection;
+
+      if (!map.current!.getSource('pyramids')) {
+        map.current!.addSource('pyramids', {
+          type: 'geojson',
+          data: pyramidGeoJSON,
+        });
+        map.current!.addLayer({
+          id: 'pyramid-layer',
+          type: 'fill-extrusion',
+          source: 'pyramids',
+          paint: {
+            'fill-extrusion-base': 4900,
+            'fill-extrusion-height': 5000,
+            'fill-extrusion-color': ['get', 'color'],
+            'fill-extrusion-opacity': 0.95,
+          },
+        });
+      } else {
+        const source = map.current!.getSource(
+          'pyramids',
+        ) as maplibregl.GeoJSONSource;
+        source.setData(pyramidGeoJSON);
+      }
+    };
+
+    map.current.on('load', handleLoad);
+
+    // Also update whenever users change after map loaded
+    return () => {
+      map.current?.off('load', handleLoad);
+    };
+  }, [users]);
 
   return (
     <div
