@@ -217,17 +217,17 @@ const ReliableMap = () => {
     });
     map.current.addControl(geolocate);
     geolocate.on('geolocate', (pos) => {
-      if (!pos?.coords) {
-        return;
-      }
+      if (!pos?.coords) return;
+
       const coords: [number, number] = [
         pos.coords.longitude,
         pos.coords.latitude,
       ];
+
       updateUser({
         id: 'rk',
         name: 'ROKAS',
-        coords: pos.coords,
+        coords, // important: [lon, lat] array
         color: '#32D74B',
         sizeMeters: 26,
         heightMeters: 80,
