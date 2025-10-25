@@ -211,7 +211,8 @@ window.onunhandledrejection = function (event) {
     });
     map.current.addControl(geolocate);
     geolocate.on('trackuserlocationend', (pos) => {
-      const coords: [number, number] = [
+      alert(pos);
+      /*const coords: [number, number] = [
         pos.coords.longitude,
         pos.coords.latitude,
       ];
@@ -223,9 +224,9 @@ window.onunhandledrejection = function (event) {
         color: '#32D74B',
         sizeMeters: 26,
         heightMeters: 80,
-      });
+      });*/
 
-      console.log('Updated user coordinates:', coords);
+      //console.log('Updated user coordinates:', coords);
     });
 
     map.current.on('load', () => {
