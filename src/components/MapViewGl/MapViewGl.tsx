@@ -214,6 +214,8 @@ const ReliableMap = () => {
     const geolocate = new GeolocateControl({
       positionOptions: { enableHighAccuracy: true },
       trackUserLocation: false, // ❌ disable the blue dot tracking
+      showUserLocation: false, // Disable the blue location marker
+      showAccuracyCircle: false, // Optionally, disable the accuracy circle
     });
     map.current.addControl(geolocate);
     geolocate.on('geolocate', (pos) => {
@@ -237,9 +239,6 @@ const ReliableMap = () => {
     });
 
     map.current.on('load', () => {
-      const els = document.getElementsByClassName('maplibregl-ctrl-geolocate');
-      Array.from(els).forEach((el) => el.remove());
-
       // Compose a multi-feature GeoJSON: one polygon per use
 
       // Extrusion layer: use 'fill-extrusion' with per-fe
