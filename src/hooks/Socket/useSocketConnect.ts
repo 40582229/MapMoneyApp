@@ -1,26 +1,37 @@
 import { useEffect } from 'react';
-import useStore from '../../store/userStore';
+import { User } from '../../components/MapViewGl/MapViewGl';
 
 const websocketApiUrl = import.meta.env.VITE_APP_WEBSOCET_CONNECTION_URL || '';
-let ws = new WebSocket(websocketApiUrl);
-ws.binaryType = 'arraybuffer';
 
-const useSocketConnect = () => {
-  let ws = new WebSocket(websocketApiUrl);
-  ws.binaryType = 'arraybuffer';
+const useSocketConnect = (updateUser: (newUser: User) => void) => {
   useEffect(() => {
+    const ws = new WebSocket('ws://192.168.0.37:3001');
+    ws.binaryType = 'arraybuffer';
+
     ws.onopen = () => {
-      console.log('WebSocket connected');
+      console.log('✅ WebSocket connected:', websocketApiUrl);
     };
-  }, []);
-  ws.addEventListener('message', (msg) => {
-    const text = new TextDecoder('utf-8').decode(msg.data);
-    let cords = JSON.parse(text);
-    if (cords) {
-      const upsertUser = useStore((s)=> s.upsertUser);
-      cords
-    }
-  });
+
+    ws.onerror = (err) => {
+      console.error('❌ WebSocket error:', err);
+    };
+
+    ws.onmessage = (msg) => {
+      try {
+        const user = JSON.parse(msg.data);
+        console.log('📡 Received:', user);
+        if (user) updateUser(user);
+      } catch (e) {
+        console.error('Failed to parse message:', e);
+      }
+    };
+    return () => {
+      if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+        ws.close(); // Close the connection
+        console.log('🔌 WebSocket disconnected');
+      }
+    };
+  }, [updateUser]);
 };
 
 export default useSocketConnect;

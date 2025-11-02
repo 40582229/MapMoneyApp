@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import maplibregl, { GeolocateControl } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { FeatureCollection, Feature, Polygon } from 'geojson';
-
+import useSocketConnect from '../../hooks/Socket/useSocketConnect';
+import useFlightDataGet from '../../hooks/Socket/useFlightDataGet';
 // Haversine-ish destination point: given lon, lat (deg), bearing (deg), distance (m)
 function destinationPoint(
   lon: number,
@@ -92,7 +93,7 @@ function buildPyramidPolygon(
   // Return geojson polygon geometry
   return coords;
 }
-type User = {
+export type User = {
   id: string;
   name: string;
   coords: [number, number];
@@ -115,6 +116,18 @@ const ReliableMap = () => {
       heightMeters: 90,
     },
   ]);
+
+  const updateUser = useCallback((newUser: User) => {
+    setUsers((prev) => {
+      const exists = prev.find((u) => u.id === newUser.id);
+      if (exists) {
+        return prev.map((u) => (u.id === newUser.id ? newUser : u));
+      } else {
+        return [...prev, newUser];
+      }
+    });
+  }, []);
+  useSocketConnect(updateUser)
   // Catch uncaught JS errors
   window.onerror = function (message, source, lineno, colno, error) {
     alert(`Error: ${message}\nSource: ${source}:${lineno}:${colno}`);
@@ -131,17 +144,6 @@ const ReliableMap = () => {
   window.onunhandledrejection = function (event) {
     alert(`Unhandled Promise Rejection: ${event.reason}`);
     console.error('Caught by window.onunhandledrejection:', event.reason);
-  };
-
-  const updateUser = (newUser: User) => {
-    setUsers((prev) => {
-      const exists = prev.find((u) => u.id === newUser.id);
-      if (exists) {
-        return prev.map((u) => (u.id === newUser.id ? newUser : u));
-      } else {
-        return [...prev, newUser];
-      }
-    });
   };
 
   // Example users: each has coords and optional visual properties
@@ -187,6 +189,16 @@ const ReliableMap = () => {
           maxzoom: 18,
           minzoom: 0,
         },
+        'aws-terrain': {
+          type: 'raster-dem',
+          tiles: [
+            'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
+          ],
+          maxzoom: 18,
+          minzoom: 8,
+          encoding: 'terrarium',
+          tileSize: 256,
+        },
       },
       layers: [
         {
@@ -210,7 +222,12 @@ const ReliableMap = () => {
     });
 
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
-
+    map.current.addControl(
+      new maplibregl.TerrainControl({
+        source: 'aws-terrain',
+        exaggeration: 6,
+      }),
+    );
     const geolocate = new GeolocateControl({
       positionOptions: { enableHighAccuracy: true },
       trackUserLocation: true,
@@ -287,6 +304,7 @@ const ReliableMap = () => {
       }
     };
   }, []); // run once
+
   useEffect(() => {
     if (!map.current) return;
     // Wait for the map to finish loading its style
@@ -304,8 +322,8 @@ const ReliableMap = () => {
               id: user.id,
               name: user.name,
               color: user.color,
-              height: user.heightMeters,
-              base: user.sizeMeters,
+              height: user.heightMeters - user.sizeMeters + 300,
+              base: user.heightMeters - user.sizeMeters,
             },
             geometry: {
               type: 'Polygon',
