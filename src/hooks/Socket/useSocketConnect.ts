@@ -19,7 +19,7 @@ const useSocketConnect = (updateUser: (newUser: User) => void) => {
     ws.onmessage = (msg) => {
       try {
         const user = JSON.parse(msg.data);
-        console.log('📡 Received:', user);
+        //console.log('📡 Received:', user);
         if (user) updateUser(user);
       } catch (e) {
         console.error('Failed to parse message:', e);

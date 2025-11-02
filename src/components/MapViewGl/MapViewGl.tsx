@@ -3,7 +3,7 @@ import maplibregl, { GeolocateControl } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { FeatureCollection, Feature, Polygon } from 'geojson';
 import useSocketConnect from '../../hooks/Socket/useSocketConnect';
-import useFlightDataGet from '../../hooks/Socket/useFlightDataGet';
+import type { Geometry, GeoJsonProperties } from 'geojson';
 // Haversine-ish destination point: given lon, lat (deg), bearing (deg), distance (m)
 function destinationPoint(
   lon: number,
@@ -116,7 +116,7 @@ const ReliableMap = () => {
       heightMeters: 90,
     },
   ]);
-
+  const [plane, setPlane] = useState<User>();
   const updateUser = useCallback((newUser: User) => {
     setUsers((prev) => {
       const exists = prev.find((u) => u.id === newUser.id);
@@ -127,7 +127,45 @@ const ReliableMap = () => {
       }
     });
   }, []);
-  useSocketConnect(updateUser)
+  const [userFeatures, setUserFeatures] = useState<
+    Feature<Geometry, GeoJsonProperties>[]
+  >([]);
+
+  const fts = useRef<Feature<Geometry, GeoJsonProperties>[]>([]);
+
+  const pyramidGeoJSON = useRef<FeatureCollection>({
+    type: 'FeatureCollection' as const,
+    features: fts.current,
+    /*users.map((user, idx) => {
+          const center = user.coords;
+          const next = users[(idx + 1) % users.length]?.coords || center;
+          const bearing = bearingBetweenPoints(center, next);
+
+          return {
+            type: 'Feature',
+            properties: {
+              id: user.id,
+              name: user.name,
+              color: user.color,
+              height: user.heightMeters - user.sizeMeters + 300,
+              base: user.heightMeters - user.sizeMeters,
+            },
+            geometry: {
+              type: 'Polygon',
+              coordinates: [
+                buildPyramidPolygon(
+                  center,
+                  bearing,
+                  user.sizeMeters,
+                  user.sizeMeters,
+                ),
+              ],
+            },
+          } as Feature<Polygon, any>;
+        }),*/
+  });
+
+  useSocketConnect(setPlane);
   // Catch uncaught JS errors
   window.onerror = function (message, source, lineno, colno, error) {
     alert(`Error: ${message}\nSource: ${source}:${lineno}:${colno}`);
@@ -309,41 +347,10 @@ const ReliableMap = () => {
     if (!map.current) return;
     // Wait for the map to finish loading its style
     const handleLoad = () => {
-      const pyramidGeoJSON = {
-        type: 'FeatureCollection' as const,
-        features: users.map((user, idx) => {
-          const center = user.coords;
-          const next = users[(idx + 1) % users.length]?.coords || center;
-          const bearing = bearingBetweenPoints(center, next);
-
-          return {
-            type: 'Feature',
-            properties: {
-              id: user.id,
-              name: user.name,
-              color: user.color,
-              height: user.heightMeters - user.sizeMeters + 300,
-              base: user.heightMeters - user.sizeMeters,
-            },
-            geometry: {
-              type: 'Polygon',
-              coordinates: [
-                buildPyramidPolygon(
-                  center,
-                  bearing,
-                  user.sizeMeters,
-                  user.sizeMeters,
-                ),
-              ],
-            },
-          } as Feature<Polygon, any>;
-        }),
-      } as FeatureCollection;
-
       if (!map.current!.getSource('pyramids')) {
         map.current!.addSource('pyramids', {
           type: 'geojson',
-          data: pyramidGeoJSON,
+          data: pyramidGeoJSON?.current,
         });
         map.current!.addLayer({
           id: 'pyramid-layer',
@@ -360,10 +367,11 @@ const ReliableMap = () => {
         const source = map.current!.getSource(
           'pyramids',
         ) as maplibregl.GeoJSONSource;
-        source.setData(pyramidGeoJSON);
+
+        if (pyramidGeoJSON.current) source.setData(pyramidGeoJSON.current);
       }
     };
-
+    //console.log(source._data.features as maplibregl.GeoJSONFeature);
     if (map.current.loaded()) {
       handleLoad();
     } else {
@@ -373,7 +381,60 @@ const ReliableMap = () => {
     return () => {
       map.current?.off('load', handleLoad);
     };
-  }, [users]);
+  }, []);
+
+  useEffect(() => {
+    if (!plane) return;
+    const existingPlane: Feature<Geometry, GeoJsonProperties> | undefined =
+      fts.current.find((feature) => feature.properties?.id === plane.id);
+
+    console.log(fts);
+    if (existingPlane) {
+      const bearing = bearingBetweenPoints(plane.coords, [200, 200]);
+      const newPLaneGeometry: Geometry = {
+        type: 'Polygon',
+        coordinates: [
+          buildPyramidPolygon(
+            plane.coords,
+            bearing,
+            plane.sizeMeters,
+            plane.sizeMeters,
+          ),
+        ],
+      };
+      existingPlane.geometry = newPLaneGeometry;
+    } else {
+      const bearing = 50; //bearingBetweenPoints(plane.coords, [200, 200]);
+      const newFeature = {
+        type: 'Feature',
+        properties: {
+          id: plane.id,
+          name: plane.name,
+          color: plane.color,
+          height: plane.heightMeters - plane.sizeMeters + 300,
+          base: plane.heightMeters - plane.sizeMeters,
+        },
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            buildPyramidPolygon(
+              plane.coords,
+              bearing,
+              plane.sizeMeters,
+              plane.sizeMeters,
+            ),
+          ],
+        },
+      } as Feature<Polygon, any>;
+      fts.current.push(newFeature);
+      //pyramidGeoJSON.features.push(newFeature);
+    }
+    const source = map.current!.getSource(
+      'pyramids',
+    ) as maplibregl.GeoJSONSource;
+    if (pyramidGeoJSON?.current && source)
+      source.setData(pyramidGeoJSON.current);
+  }, [plane]);
 
   return (
     <div
