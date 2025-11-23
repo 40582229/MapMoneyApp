@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import maplibregl, { GeolocateControl } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { FeatureCollection, Feature, Polygon } from 'geojson';
 import useSocketConnect from '../../hooks/Socket/useSocketConnect';
-import type { Geometry, GeoJsonProperties } from 'geojson';
-import { useRenderPlanes, useUpdatePlane } from '../../hooks';
+import type { GeoJsonProperties } from 'geojson';
+import { useAdd32Plane, useRenderPlanes, useUpdatePlane } from '../../hooks';
 // Haversine-ish destination point: given lon, lat (deg), bearing (deg), distance (m)
 
 export interface User {
@@ -14,7 +14,7 @@ export interface User {
   color: string;
   sizeMeters: number;
   heightMeters: number;
-};
+}
 
 const ReliableMap = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
@@ -84,7 +84,7 @@ const ReliableMap = () => {
 
     map.current = new maplibregl.Map({
       container: mapContainer.current,
-      style,
+      style:'https://tiles.openfreemap.org/styles/bright' ,
       center: [-3.436, 55.3781],
       zoom: 5.3,
       pitch: 55,
@@ -92,8 +92,8 @@ const ReliableMap = () => {
       maxPitch: 65,
       maxZoom: 18,
       minZoom: 2,
+      canvasContextAttributes: { antialias: true },
     });
-
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
 
     /*map.current.addControl(
@@ -125,12 +125,17 @@ const ReliableMap = () => {
 
     map.current.on('load', () => {
       try {
-        //geolocate.trigger();
+        if(!map.current) return;
+            map.current.setProjection({ type: 'globe' });
+
       } catch (e) {
         // some browsers may throw if geolocation isn't allowed - ignore
       }
     });
+    map.current.on('style.load',()=>{
+        useAdd32Plane(map);
 
+    })
     map.current.on('error', (e) => console.error('MapLibre error:', e));
 
     // Clean up on unmount
@@ -143,10 +148,9 @@ const ReliableMap = () => {
   }, []); // run once
 
   //render planes on map(for now planes are green triangles)
-  useRenderPlanes({map, planesGEO});
+  useRenderPlanes({ map, planesGEO });
   // this will update position of the plane
-  useUpdatePlane({newPlane:plane, planesList, map, planesGEO});
-
+  useUpdatePlane({ newPlane: plane, planesList, map, planesGEO });
 
   return (
     <div

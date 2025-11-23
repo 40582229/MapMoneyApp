@@ -155,11 +155,12 @@ export const useUpdatePlane = ({
       } as Feature<Polygon, any>;
       planesList.current.push(newFeature);
       //pyramidGeoJSON.features.push(newFeature);
-    }
-    const source = map.current!.getSource(
+          const source = map.current!.getSource(
       'pyramids',
     ) as maplibregl.GeoJSONSource;
     
     if (planesGEO?.current && source) source.setData(planesGEO.current);
+    }
+
   }, [newPlane]);
 };
