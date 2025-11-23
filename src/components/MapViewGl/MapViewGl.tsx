@@ -21,7 +21,7 @@ const ReliableMap = () => {
   const map = useRef<maplibregl.Map | null>(null);
   const [plane, setPlane] = useState<User>();
 
-  const planesList = useRef<Feature<Geometry, GeoJsonProperties>[]>([]);
+  const planesList = useRef<Feature<Polygon, GeoJsonProperties>[]>([]);
 
   const planesGEO = useRef<FeatureCollection>({
     type: 'FeatureCollection' as const,

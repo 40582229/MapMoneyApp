@@ -1,6 +1,12 @@
-import { useEffect } from "react";
-import { User } from "../../components/MapViewGl/MapViewGl";
-import type { Feature, Geometry, GeoJsonProperties, Polygon, FeatureCollection } from 'geojson';
+import { useEffect } from 'react';
+import { User } from '../../components/MapViewGl/MapViewGl';
+import type {
+  Feature,
+  Geometry,
+  GeoJsonProperties,
+  Polygon,
+  FeatureCollection,
+} from 'geojson';
 
 function destinationPoint(
   lon: number,
@@ -91,33 +97,39 @@ function buildPyramidPolygon(
   return coords;
 }
 
-interface UpdatePlaneProps{
-    newPlane: User | undefined,
-    planesList: React.RefObject<Feature<Geometry, GeoJsonProperties>[]>,
-    map: React.RefObject<maplibregl.Map | null>,
-    planesGEO: React.RefObject<FeatureCollection<Geometry, GeoJsonProperties>>
+interface UpdatePlaneProps {
+  newPlane: User | undefined;
+  planesList: React.RefObject<Feature<Polygon, GeoJsonProperties>[]>;
+  map: React.RefObject<maplibregl.Map | null>;
+  planesGEO: React.RefObject<FeatureCollection<Geometry, GeoJsonProperties>>;
 }
-export const useUpdatePlane = ({newPlane, planesList, map, planesGEO}: UpdatePlaneProps) =>{
-      useEffect(() => {
+export const useUpdatePlane = ({
+  newPlane,
+  planesList,
+  map,
+  planesGEO,
+}: UpdatePlaneProps) => {
+  useEffect(() => {
     if (!newPlane) return;
-    const existingPlane: Feature<Geometry, GeoJsonProperties> | undefined =
-      planesList.current.find((feature) => feature.properties?.id === newPlane.id);
+    const existingPlane: Feature<Polygon, GeoJsonProperties> | undefined =
+      planesList.current.find(
+        (feature) => feature.properties?.id === newPlane.id,
+      );
 
     console.log(planesList);
     if (existingPlane) {
       const bearing = bearingBetweenPoints(newPlane.coords, [200, 200]);
-      const newPLaneGeometry: Geometry = {
-        type: 'Polygon',
-        coordinates: [
-          buildPyramidPolygon(
-            newPlane.coords,
-            bearing,
-            newPlane.sizeMeters,
-            newPlane.sizeMeters,
-          ),
-        ],
-      };
-      existingPlane.geometry = newPLaneGeometry;
+      const coords  = existingPlane.geometry.coordinates[0];
+      const [tip, leftBase, rightBase] = buildPyramidPolygon(
+        newPlane.coords,
+        bearing,
+        newPlane.sizeMeters,
+        newPlane.sizeMeters,
+      );
+      coords[0] = tip;
+      coords[1] = leftBase;
+      coords[2] = rightBase;
+      coords[3] = tip;
     } else {
       const bearing = 50; //bearingBetweenPoints(plane.coords, [200, 200]);
       const newFeature = {
@@ -147,8 +159,7 @@ export const useUpdatePlane = ({newPlane, planesList, map, planesGEO}: UpdatePla
     const source = map.current!.getSource(
       'pyramids',
     ) as maplibregl.GeoJSONSource;
-    if (planesGEO?.current && source)
-      source.setData(planesGEO.current);
-
+    
+    if (planesGEO?.current && source) source.setData(planesGEO.current);
   }, [newPlane]);
-}
+};
