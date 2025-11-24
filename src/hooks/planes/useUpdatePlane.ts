@@ -119,7 +119,7 @@ export const useUpdatePlane = ({
     console.log(planesList);
     if (existingPlane) {
       const bearing = bearingBetweenPoints(newPlane.coords, [200, 200]);
-      const coords  = existingPlane.geometry.coordinates[0];
+      const coords = existingPlane.geometry.coordinates[0];
       const [tip, leftBase, rightBase] = buildPyramidPolygon(
         newPlane.coords,
         bearing,
@@ -154,13 +154,12 @@ export const useUpdatePlane = ({
         },
       } as Feature<Polygon, any>;
       planesList.current.push(newFeature);
-      //pyramidGeoJSON.features.push(newFeature);
-          const source = map.current!.getSource(
+    }
+    //planesGEO.current.features.push(newFeature);
+    const source = map.current!.getSource(
       'pyramids',
     ) as maplibregl.GeoJSONSource;
-    
-    if (planesGEO?.current && source) source.setData(planesGEO.current);
-    }
 
+    if (planesGEO?.current && source) source.setData(planesGEO.current);
   }, [newPlane]);
 };
