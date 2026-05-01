@@ -50,37 +50,6 @@ const ReliableMap = () => {
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
-    const style: maplibregl.StyleSpecification = {
-      version: 8,
-      projection: { type: 'globe' },
-
-      sources: {
-        osm: {
-          type: 'raster',
-          tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-          attribution: '&copy; OpenStreetMap contributors & OpenFreeMap',
-          maxzoom: 18,
-          minzoom: 0,
-        },
-        /*'aws-terrain': {
-          type: 'raster-dem',
-          tiles: [
-            'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
-          ],
-          maxzoom: 18,
-          minzoom: 8,
-          encoding: 'terrarium',
-          tileSize: 256,
-        },*/
-      },
-      layers: [
-        {
-          id: 'osm',
-          type: 'raster',
-          source: 'osm',
-        },
-      ],
-    };
 
     map.current = new maplibregl.Map({
       container: mapContainer.current,

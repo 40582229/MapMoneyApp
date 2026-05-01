@@ -73,7 +73,7 @@ export const useAdd32Plane = (map: React.RefObject<maplibregl.Map | null>) => {
       this.renderer.autoClear = false;
     },
 
-    render(gl, args) {
+    render(_gl, args) {
       const rotationX = new THREE.Matrix4().makeRotationAxis(
         new THREE.Vector3(1, 0, 0),
         modelTransform.rotateX,

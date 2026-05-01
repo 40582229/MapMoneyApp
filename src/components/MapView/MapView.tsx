@@ -3,14 +3,11 @@ import 'ol/ol.css';
 import Map from 'ol/Map';
 import TileLayer from 'ol/layer/Tile';
 import { View, Geolocation, Feature } from 'ol';
-import { OSM } from 'ol/source';
 import UsersLocationLayer from '../../layers/PositionLayer/UsersLocationLayer';
 import Control from 'ol/control/Control';
-import { LineString, Point } from 'ol/geom';
+import { Point } from 'ol/geom';
 import Style from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
-import Fill from 'ol/style/Fill';
-import CircleStyle from 'ol/style/Circle';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import XYZ from 'ol/source/XYZ';
@@ -39,9 +36,6 @@ const satShade = new TileLayer({
   opacity: 1,
 });
 
-const rasterLayer = new TileLayer({
-  source: new OSM(),
-});
 
 const getDistance = (coord1: Array<number>, coord2: Array<number>) => {
   const R = 6371e3; // Earth radius in meters
@@ -161,7 +155,6 @@ const MapView = () => {
       };
 
       const startLonLat = toLonLat(userPos);
-      const destLonLat = toLonLat(dest);
 
       // Fetch walking route from ORS
       try {

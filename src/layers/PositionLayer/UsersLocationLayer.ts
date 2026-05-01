@@ -1,7 +1,6 @@
 import { Feature } from 'ol';
-import { Geometry, LineString, Point } from 'ol/geom';
+import { LineString, Point } from 'ol/geom';
 import VectorLayer from 'ol/layer/Vector';
-import { Source } from 'ol/source';
 import VectorSource from 'ol/source/Vector';
 import CircleStyle from 'ol/style/Circle';
 import Fill from 'ol/style/Fill';
