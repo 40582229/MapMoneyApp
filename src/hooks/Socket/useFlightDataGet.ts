@@ -28,7 +28,7 @@ const useFlightDataGet = () => {
           //speed: parts[13],
           coords:[parts[15], parts[14]],
           sizeMeters:500,
-          color: '#32D74B',
+          color: '#ff4444',
           name:'plane'+parts[4]  
           //track: parts[16],
         };

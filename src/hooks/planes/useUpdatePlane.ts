@@ -137,7 +137,7 @@ export const useUpdatePlane = ({
         properties: {
           id: newPlane.id,
           name: newPlane.name,
-          color: newPlane.color,
+          color: '#ff0000',
           height: newPlane.heightMeters - newPlane.sizeMeters + 300,
           base: newPlane.heightMeters - newPlane.sizeMeters,
         },

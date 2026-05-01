@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import maplibregl, { GeolocateControl, LngLatLike } from 'maplibre-gl';
-import { useEffect } from 'react';
+import maplibregl, { LngLatLike } from 'maplibre-gl';
+
 
 export const useAdd32Plane = (map: React.RefObject<maplibregl.Map | null>) => {
   const modelOrigin = [148.9819, -35.39847];
