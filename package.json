@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "http://40582229.github.io/MapMoneyApp",
+  "homepage": "https://40582229.github.io/MapMoneyApp",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
