@@ -5,7 +5,7 @@ const websocketApiUrl = import.meta.env.VITE_APP_WEBSOCET_CONNECTION_URL || '';
 
 const useSocketConnect = (updateUser: (newUser: User) => void) => {
   useEffect(() => {
-    const ws = new WebSocket('ws://192.168.0.37:8081');
+    const ws = new WebSocket('ws://80.193.148.199:8081');
     ws.binaryType = 'arraybuffer';
 
     ws.onopen = () => {
