@@ -5,7 +5,7 @@ const websocketApiUrl = import.meta.env.VITE_APP_WEBSOCET_CONNECTION_URL || '';
 
 const useSocketConnect = (updateUser: (newUser: User) => void) => {
   useEffect(() => {
-    const ws = new WebSocket('wss://opportunities-huntington-malpractice-makeup.trycloudflare.com');
+    const ws = new WebSocket('wss://setup-moved-block-produce.trycloudflare.com');
     ws.binaryType = 'arraybuffer';
 
     ws.onopen = () => {
